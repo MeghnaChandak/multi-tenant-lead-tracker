@@ -1,0 +1,17 @@
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+# E/F: pyflakes + pycodestyle errors (real bugs, unused imports/vars)
+# I: import sorting
+# Deliberately not enabling the full "ALL" ruleset (e.g. C408 dict-literal
+# style, BLE001 blind-except) — those are style preferences, not bugs,
+# and would generate noise disproportionate to their value on a project
+# this size.
+select = ["E", "F", "I"]
+ignore = [
+    "E501",  # line length handled by line-length above, not as a hard error
+    "E712",  # `Column == False` is correct SQLAlchemy filter syntax — `not Column`
+             # (ruff's suggested fix) would break queries by testing Python
+             # truthiness instead of generating SQL.
+]
