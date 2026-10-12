@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { leadApi } from '../api/resources';
 import { useAuth } from '../hooks/useAuth';
 import LeadDetailModal from '../components/LeadDetailModal';
@@ -7,6 +8,7 @@ export default function LeadsPage() {
   const { tenantId } = useAuth();
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [notSubscribed, setNotSubscribed] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [selectedLeadId, setSelectedLeadId] = useState(null);
   const [form, setForm] = useState({ name: '', company: '', phone: '', email: '' });
@@ -14,9 +16,14 @@ export default function LeadsPage() {
 
   const load = useCallback(async () => {
     if (!tenantId) return;
-    const data = await leadApi.list(tenantId);
-    setLeads(data);
-    setLoading(false);
+    try {
+      const data = await leadApi.list(tenantId);
+      setLeads(data);
+    } catch (err) {
+      if (err.status === 402) setNotSubscribed(true);
+    } finally {
+      setLoading(false);
+    }
   }, [tenantId]);
 
   useEffect(() => { load(); }, [load]);
@@ -31,6 +38,17 @@ export default function LeadsPage() {
   }
 
   if (loading) return <p style={{ color: 'var(--muted)' }}>Loading…</p>;
+
+  if (notSubscribed) {
+    return (
+      <div>
+        <p style={{ color: 'var(--muted)', marginBottom: 12 }}>This workspace isn't subscribed yet.</p>
+        <Link to="/billing" className="btn-primary" style={{ display: 'inline-block', textDecoration: 'none' }}>
+          Go to billing
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div>

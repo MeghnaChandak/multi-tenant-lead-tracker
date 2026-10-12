@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { leadApi } from '../api/resources';
 import { useAuth } from '../hooks/useAuth';
 import { useTenantSocket } from '../hooks/useTenantSocket';
@@ -12,6 +13,7 @@ export default function PipelinePage() {
   const { tenantId } = useAuth();
   const [summary, setSummary] = useState(null);
   const [forbidden, setForbidden] = useState(false);
+  const [notSubscribed, setNotSubscribed] = useState(false);
 
   const load = useCallback(async () => {
     if (!tenantId) return;
@@ -20,6 +22,7 @@ export default function PipelinePage() {
       setSummary(data);
     } catch (err) {
       if (err.status === 403) setForbidden(true);
+      if (err.status === 402) setNotSubscribed(true);
     }
   }, [tenantId]);
 
@@ -33,6 +36,16 @@ export default function PipelinePage() {
 
   if (forbidden) {
     return <p style={{ color: 'var(--muted)' }}>Pipeline view is available to admins and owners.</p>;
+  }
+  if (notSubscribed) {
+    return (
+      <div>
+        <p style={{ color: 'var(--muted)', marginBottom: 12 }}>This workspace isn't subscribed yet.</p>
+        <Link to="/billing" className="btn-primary" style={{ display: 'inline-block', textDecoration: 'none' }}>
+          Go to billing
+        </Link>
+      </div>
+    );
   }
   if (!summary) return <p style={{ color: 'var(--muted)' }}>Loading…</p>;
 

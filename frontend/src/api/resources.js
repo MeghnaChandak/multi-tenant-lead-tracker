@@ -12,7 +12,6 @@ export const tenantApi = {
   members: (tenantId) => api.request(`/tenants/${tenantId}/members`),
   invite: (tenantId, email, role) =>
     api.request(`/tenants/${tenantId}/invite`, { method: 'POST', body: { email, role } }),
-  myTenants: () => api.request('/tenants/me/tenants'),
 };
 
 export const leadApi = {

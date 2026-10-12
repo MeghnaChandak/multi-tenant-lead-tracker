@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { tenantApi } from '../api/resources';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login, selectTenant } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
@@ -17,13 +16,9 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login(email, password);
-      const tenants = await tenantApi.myTenants();
-      if (tenants.length > 0) {
-        selectTenant(tenants[0].tenant_id);
-      }
-      navigate("/");
+      navigate('/');
     } catch (err) {
-      setError(err.data?.detail || err.message || "Incorrect email or password");
+      setError(err.data?.detail || 'Incorrect email or password');
     } finally {
       setLoading(false);
     }

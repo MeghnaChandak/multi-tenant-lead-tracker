@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { leadApi } from '../api/resources';
 import { useAuth } from '../hooks/useAuth';
 import { useTenantSocket } from '../hooks/useTenantSocket';
@@ -8,13 +9,19 @@ export default function DashboardPage() {
   const { tenantId } = useAuth();
   const [dueToday, setDueToday] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [notSubscribed, setNotSubscribed] = useState(false);
   const [selectedLeadId, setSelectedLeadId] = useState(null);
 
   const loadDueToday = useCallback(async () => {
     if (!tenantId) return;
-    const leads = await leadApi.dueToday(tenantId);
-    setDueToday(leads);
-    setLoading(false);
+    try {
+      const leads = await leadApi.dueToday(tenantId);
+      setDueToday(leads);
+    } catch (err) {
+      if (err.status === 402) setNotSubscribed(true);
+    } finally {
+      setLoading(false);
+    }
   }, [tenantId]);
 
   useEffect(() => { loadDueToday(); }, [loadDueToday]);
@@ -30,6 +37,17 @@ export default function DashboardPage() {
   useTenantSocket(tenantId, handleSocketEvent);
 
   if (loading) return <p style={{ color: 'var(--muted)' }}>Loading…</p>;
+
+  if (notSubscribed) {
+    return (
+      <div>
+        <p style={{ color: 'var(--muted)', marginBottom: 12 }}>This workspace isn't subscribed yet.</p>
+        <Link to="/billing" className="btn-primary" style={{ display: 'inline-block', textDecoration: 'none' }}>
+          Go to billing
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div>

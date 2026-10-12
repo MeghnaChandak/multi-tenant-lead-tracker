@@ -29,8 +29,8 @@ export default function AppShell() {
               fontSize: 14,
               marginBottom: 2,
               textDecoration: 'none',
-              color: isActive ? 'var(--rust)' : 'var(--muted)',
-              background: isActive ? 'var(--rust-bg)' : 'transparent',
+              color: isActive ? 'var(--moss)' : 'var(--muted)',
+              background: isActive ? 'var(--moss-bg)' : 'transparent',
               fontWeight: isActive ? 500 : 400,
             })}
           >

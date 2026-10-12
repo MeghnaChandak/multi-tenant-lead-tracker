@@ -8,8 +8,6 @@ import DashboardPage from './pages/DashboardPage';
 import LeadsPage from './pages/LeadsPage';
 import PipelinePage from './pages/PipelinePage';
 import BillingPage from './pages/BillingPage';
-import BillingSuccessPage from './pages/BillingSuccessPage';
-import BillingCancelledPage from './pages/BillingCancelledPage';
 
 export default function App() {
   return (
@@ -30,8 +28,6 @@ export default function App() {
             <Route path="leads" element={<LeadsPage />} />
             <Route path="pipeline" element={<PipelinePage />} />
             <Route path="billing" element={<BillingPage />} />
-            <Route path="billing/success" element={<BillingSuccessPage />} />
-            <Route path="billing/cancelled" element={<BillingCancelledPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
